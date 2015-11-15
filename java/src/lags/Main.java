@@ -8,28 +8,28 @@ public class Main {
 
     static final boolean debug = true;
     // ==================
-    // fonction principale
+    // main function
     // ===================
 
     public static void main(String[] args) throws IOException
     {
         LagsService service = new LagsService();
-        service.getFichierOrder("..\\ORDRES.CSV");
+        service.getFileOrder("..\\ORDRES.CSV");
         boolean flag = false;
-        // tant que ce n'est pas la fin du programme
+        // While it's not the end
         while (!flag)
         {
-            // met la commande à Z
-            char commande = 'Z';
-            while (commande != 'A' && commande != 'L' && commande != 'S' && commande != 'Q' && commande != 'C')
+            // command is now Z
+            char command = 'Z';
+            while (command != 'A' && command != 'L' && command != 'S' && command != 'Q' && command != 'C')
             {
-                System.out.println("A)JOUTER UN ORDRE  L)ISTER   C)ALCULER CA  S)UPPRIMER  Q)UITTER");
+                System.out.println("A)DD ORDER  L)IST   C)ACLCULATE GS  S)UPPRESS  Q)UIT");
                 BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-                commande = br.readLine().charAt(0);
-                commande = Character.toUpperCase(commande);
+                command = br.readLine().charAt(0);
+                command = Character.toUpperCase(command);
                 System.out.println();
             }
-            switch (commande)
+            switch (command)
             {
                 case 'Q':
                 {
@@ -38,22 +38,22 @@ public class Main {
                 }
                 case 'L':
                 {
-                    service.liste();
+                    service.list();
                     break;
                 }
                 case 'A':
                 {
-                    service.ajouterOrdre();
+                    service.addOrder();
                     break;
                 }
                 case 'S':
                 {
-                    service.suppression();
+                    service.suppress();
                     break;
                 }
                 case 'C':
                 {
-                    service.calculerLeCA(debug);
+                    service.calculateTheGS(debug);
                     break;
                 }
             }

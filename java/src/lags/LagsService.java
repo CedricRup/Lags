@@ -8,10 +8,10 @@ import java.util.stream.Collectors;
 
 public class LagsService {
 
-    List<Ordre> listeOrdre = new ArrayList<>();
+    List<Order> listOrder = new ArrayList<>();
 
-    // lit le fihier des ordres et calcule le CA
-    public void getFichierOrder(String fileName)
+    // read the order fil and calculate gross sales
+    public void getFileOrder(String fileName)
     {
         try
         {
@@ -21,123 +21,123 @@ public class LagsService {
             String line;
             while((line = br.readLine()) != null){
                 String[] champs = line.split(";");
-                String chp1 = champs[0];
-                int chp2 = Integer.parseInt(champs[1]);
-                int champ3 = Integer.parseInt(champs[2]);
-                double chp4 = Double.parseDouble(champs[3]);
-                Ordre ordre = new Ordre(chp1, chp2, champ3, chp4);
-                listeOrdre.add(ordre);
+                String fld1 = champs[0];
+                int fld2 = Integer.parseInt(champs[1]);
+                int filed3 = Integer.parseInt(champs[2]);
+                double fld4 = Double.parseDouble(champs[3]);
+                Order order = new Order(fld1, fld2, filed3, fld4);
+                listOrder.add(order);
             }
             br.close();
             fr.close();
         }
         catch (FileNotFoundException e)
         {
-            System.out.println("FICHIER ORDRES.CSV NON TROUVE. CREATION FICHIER.");
-            writeOrdres(fileName);
+            System.out.println("CSV FILE NOT FOUND; CREATING ONE.");
+            writeOrders(fileName);
         } catch (IOException e) {
         }
     }
-    // écrit le fichier des ordres
-    void writeOrdres(String nomFich)
+    // write file order
+    void writeOrders(String nomFich)
     {
         try {
             FileWriter writer = new FileWriter(new File(nomFich));
-            for (Ordre ordre : listeOrdre)
+            for (Order order : listOrder)
             {
-                String[] ligneCSV = new String[4];
-                ligneCSV[0] = ordre.getId();
-                ligneCSV[1] = Integer.toString(ordre.getDebut());
-                ligneCSV[2] = Integer.toString(ordre.getDuree());
-                ligneCSV[3] = Double.toString(ordre.getPrix());
-                writer.write(String.join(";", ligneCSV) + "\n");
+                String[] CSVline = new String[4];
+                CSVline[0] = order.getId();
+                CSVline[1] = Integer.toString(order.getStart());
+                CSVline[2] = Integer.toString(order.getDuration());
+                CSVline[3] = Double.toString(order.getPrice());
+                writer.write(String.join(";", CSVline) + "\n");
             }
             writer.close();
         } catch (IOException e) {
-            // TODO CRU à toi de voir ce qu'on fait ici
+            // TODO CRU what do you want to do here ?
         }
     }
 
-    // affiche la liste des ordres
-    public void liste()
+    // show order list
+    public void list()
     {
-        System.out.println("LISTE DES ORDRES");
+        System.out.println("ORDERS LIST");
         System.out.println(String.format("%-8s %10s %5s %10s","ID", "DEBUT", "DUREE", "PRIX"));
         System.out.println(String.format("%-8s %10s %5s %10s", "--------", "-------", "-----", "----------"));
-        listeOrdre.stream().sorted((o1,o2) -> Integer.compare(o1.getDebut(), o2.getDebut())).forEach(this::afficherOrdre);
+        listOrder.stream().sorted((o1,o2) -> Integer.compare(o1.getStart(), o2.getStart())).forEach(this::showOrder);
         System.out.println(String.format("%-8s %10s %5s %10s","--------", "-------", "-----", "----------"));
     }
 
-    public void afficherOrdre(Ordre ordre)
+    public void showOrder(Order order)
     {
-        System.out.println(String.format("%-8s %10d %5d %10f", ordre.getId(), ordre.getDebut(), ordre.getDuree(), ordre.getPrix()));
+        System.out.println(String.format("%-8s %10d %5d %10f", order.getId(), order.getStart(), order.getDuration(), order.getPrice()));
     }
-    // Ajoute un ordre; le CA est recalculé en conséquence
-    public void ajouterOrdre() throws IOException
+    // Add an order; GS is recalculated
+    public void addOrder() throws IOException
     {
-        System.out.println("AJOUTER UN ORDRE");
-        System.out.println("FORMAT = ID;DEBUT;FIN;PRIX");
+        System.out.println("ADD ORDER");
+        System.out.println("FORMAT = ID;STARTT;END;PRICE");
         
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         String line = br.readLine();
               
         line = line.toUpperCase();
-        String[] champs = line.split(";");
-        String id = champs[0];
-        int dep = Integer.parseInt(champs[1]);
-        int dur = Integer.parseInt(champs[2]);
-        double prx = Double.parseDouble(champs[3]);
-        Ordre ordre = new Ordre(id, dep, dur, prx);
-        listeOrdre.add(ordre);
-        writeOrdres("..\\ordres.csv");
+        String[] fields = line.split(";");
+        String id = fields[0];
+        int st = Integer.parseInt(fields[1]);
+        int dur = Integer.parseInt(fields[2]);
+        double pr = Double.parseDouble(fields[3]);
+        Order order = new Order(id, st, dur, pr);
+        listOrder.add(order);
+        writeOrders("..\\ordres.csv");
     }
 
-    //public void CalculerLeCA()
+    //public void CalculateGS()
     //{
-    //    System.out.println("CALCUL CA..");
-    //    laListe = laListe.OrderBy(ordre => ordre.debut).ToList();
-    //    double ca = CA(laListe);
-    //    System.out.println("CA: {0,10:N2}", ca);
+    //    System.out.println("CALCULATING GS..");
+    //    theList = theList.OrderBy(ordre => ordre.debut).ToList();
+    //    double gs = GS(laListe);
+    //    System.out.println("GS: {0,10:N2}", ca);
     //}
 
-    private double CA(List<Ordre> ordres, boolean debug)
+    private double GS(List<Order> orders, boolean debug)
     {
-        // si aucun ordre, job done, TROLOLOLO..
-        if (ordres.size() == 0)
+        // No order,job done, TROLOLOLO..
+        if (orders.size() == 0)
             return 0.0;
-        Ordre order = ordres.get(0);
-        // attention ne marchSe pas pour les ordres qui depassent la fin de l'année
-        // voir ticket PLAF nO 4807
-        List<Ordre> liste = ordres.stream().filter(o -> o.getDebut() >= (order.getDebut() + order.getDuree())).collect(Collectors.toList());
-        List<Ordre> liste2 = ordres.subList(1, ordres.size());
-        double ca = order.getPrix() + CA(liste, debug);
-        // Lapin compris?
-        double ca2 = CA(liste2, debug);
-        System.out.println(debug ? new DecimalFormat("#.##").format(Math.max(ca, ca2)) : ".");
-        return Math.max(ca, ca2); // LOL
+        Order orderr = orders.get(0);
+        // Warning : doesn't work for order that span on two years
+        // see PLAF ticket nO 4807
+        List<Order> list = orders.stream().filter(o -> o.getStart() >= (orderr.getStart() + orderr.getDuration())).collect(Collectors.toList());
+        List<Order> list2 = orders.subList(1, orders.size());
+        double gs = orderr.getPrice() + GS(list, debug);
+        // I can live.... with or withoooooout youuuuuu!
+        double gs2 = GS(list2, debug);
+        System.out.println(debug ? new DecimalFormat("#.##").format(Math.max(gs, gs2)) : ".");
+        return Math.max(gs, gs2); // LOL
     }
 
-    // MAJ du fichier
-    public void suppression() throws IOException
+    // file update
+    public void suppress() throws IOException
     {
-        System.out.println("SUPPRIMER UN ORDRE");
+        System.out.println("DELETE ORDER");
         System.out.println("ID:");
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
                
         String id = br.readLine();
-        this.listeOrdre = listeOrdre.stream().filter(o -> !o.getId().equals(id.toUpperCase())).collect(Collectors.toList());
-        writeOrdres("..\\ORDRES.CSV");
+        this.listOrder = listOrder.stream().filter(o -> !o.getId().equals(id.toUpperCase())).collect(Collectors.toList());
+        writeOrders("..\\ORDRES.CSV");
     }
 
-    void calculerLeCA(boolean debug)
+    void calculateTheGS(boolean debug)
     {
-        System.out.println("CALCUL CA..");
-        listeOrdre = listeOrdre
+        System.out.println("CALCULATING GS..");
+        listOrder = listOrder
                 .stream()
-                .sorted((o1,o2) -> Integer.compare(o1.getDebut(), o2.getDebut()))
+                .sorted((o1,o2) -> Integer.compare(o1.getStart(), o2.getStart()))
                 .collect(Collectors.toList());
-        double ca = CA(listeOrdre, debug);
-        System.out.print("CA: ");
+        double ca = GS(listOrder, debug);
+        System.out.print("GS: ");
         System.out.printf(new DecimalFormat("#.##").format(ca));
         System.out.println();
     }

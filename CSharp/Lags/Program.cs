@@ -13,7 +13,7 @@ namespace Lags
     {
         const bool debug = true;
         // ==================
-        // fonction principale
+        // main function
         // ===================
 
         static void Main(string[] args)
@@ -21,19 +21,19 @@ namespace Lags
             LagsService service = new LagsService();
             service.getFichierOrder("ORDRES.CSV");
             bool flag = false;
-            // tant que ce n'est pas la fin du programme
+            // while not at the end of program
             while (!flag)
             {
-                // met la commande à Z
-                Char commande = 'Z';
-                while (commande != 'A' && commande != 'L' && commande != 'S' && commande != 'Q' && commande != 'C')
+                // set command to Z
+                Char command = 'Z';
+                while (command != 'A' && command != 'L' && command != 'S' && command != 'Q' && command != 'C')
                 {
-                    Console.WriteLine("A)JOUTER UN ORDRE  L)ISTER   C)ALCULER CA  S)UPPRIMER  Q)UITTER");
+                    Console.WriteLine("A)DD ORDER  L)IST   C)ALCULATE GS  S)UPPRESS  Q)UIT");
                     ConsoleKeyInfo keyInfo = Console.ReadKey();
-                    commande = Char.ToUpper(keyInfo.KeyChar);
+                    command = Char.ToUpper(keyInfo.KeyChar);
                     Console.WriteLine();
                 }
-                switch (commande)
+                switch (command)
                 {
                     case 'Q':
                         {
@@ -42,22 +42,22 @@ namespace Lags
                         }
                     case 'L':
                         {
-                            service.Liste();
+                            service.List();
                             break;
                         }
                     case 'A':
                         {
-                            service.AjouterOrdre();
+                            service.AddOrder();
                             break;
                         }
                     case 'S':
                         {
-                            service.Suppression();
+                            service.Delete();
                             break;
                         }
                     case 'C':
                         {
-                            service.CalculerLeCA(debug);
+                            service.CalculateTheGS(debug);
                             break;
                         }
                 }
