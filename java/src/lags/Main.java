@@ -1,6 +1,8 @@
 package lags;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 
 public class Main {
 
@@ -22,7 +24,8 @@ public class Main {
             while (commande != 'A' && commande != 'L' && commande != 'S' && commande != 'Q' && commande != 'C')
             {
                 System.out.println("A)JOUTER UN ORDRE  L)ISTER   C)ALCULER CA  S)UPPRIMER  Q)UITTER");
-                commande = (char)System.in.read();
+                BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+                commande = br.readLine().charAt(0);
                 commande = Character.toUpperCase(commande);
                 System.out.println();
             }

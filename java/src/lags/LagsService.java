@@ -1,6 +1,7 @@
 package lags;
 
 import java.io.*;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -35,7 +36,6 @@ public class LagsService {
             System.out.println("FICHIER ORDRES.CSV NON TROUVE. CREATION FICHIER.");
             writeOrdres(fileName);
         } catch (IOException e) {
-            // TODO CRU à toi de voir ce que tu fais ici
         }
     }
     // écrit le fichier des ordres
@@ -73,11 +73,14 @@ public class LagsService {
         System.out.println(String.format("%-8s %10d %5d %10f", ordre.getId(), ordre.getDebut(), ordre.getDuree(), ordre.getPrix()));
     }
     // Ajoute un ordre; le CA est recalculé en conséquence
-    public void ajouterOrdre()
+    public void ajouterOrdre() throws IOException
     {
         System.out.println("AJOUTER UN ORDRE");
         System.out.println("FORMAT = ID;DEBUT;FIN;PRIX");
-        String line = System.console().readLine();
+        
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        String line = br.readLine();
+              
         line = line.toUpperCase();
         String[] champs = line.split(";");
         String id = champs[0];
@@ -103,29 +106,30 @@ public class LagsService {
         if (ordres.size() == 0)
             return 0.0;
         Ordre order = ordres.get(0);
-        // attention ne marche pas pour les ordres qui depassent la fin de l'année
+        // attention ne marchSe pas pour les ordres qui depassent la fin de l'année
         // voir ticket PLAF nO 4807
-        List<Ordre> liste = ordres.stream().filter(o -> o.getDebut() >= (o.getDebut() + o.getDuree())).collect(Collectors.toList());
-        List<Ordre> liste2 = ordres.subList(1, ordres.size() - 1);
+        List<Ordre> liste = ordres.stream().filter(o -> o.getDebut() >= (order.getDebut() + order.getDuree())).collect(Collectors.toList());
+        List<Ordre> liste2 = ordres.subList(1, ordres.size());
         double ca = order.getPrix() + CA(liste, debug);
         // Lapin compris?
         double ca2 = CA(liste2, debug);
-        System.out.println(debug ? String.format("{0,10:N2}\n", Math.max(ca, ca2)) : ".");
+        System.out.println(debug ? new DecimalFormat("#.##").format(Math.max(ca, ca2)) : ".");
         return Math.max(ca, ca2); // LOL
     }
 
     // MAJ du fichier
-    public void suppression()
+    public void suppression() throws IOException
     {
         System.out.println("SUPPRIMER UN ORDRE");
         System.out.println("ID:");
-        String id = System.console().readLine();
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+               
+        String id = br.readLine();
         this.listeOrdre = listeOrdre.stream().filter(o -> !o.getId().equals(id.toUpperCase())).collect(Collectors.toList());
         writeOrdres("..\\ORDRES.CSV");
     }
 
-    // internal en java ???
-    /*internal*/ void calculerLeCA(boolean debug)
+    void calculerLeCA(boolean debug)
     {
         System.out.println("CALCUL CA..");
         listeOrdre = listeOrdre
@@ -133,7 +137,9 @@ public class LagsService {
                 .sorted((o1,o2) -> Integer.compare(o1.getDebut(), o2.getDebut()))
                 .collect(Collectors.toList());
         double ca = CA(listeOrdre, debug);
-        System.out.printf("CA: %10d", ca);
+        System.out.print("CA: ");
+        System.out.printf(new DecimalFormat("#.##").format(ca));
+        System.out.println();
     }
 
 }
