@@ -1,6 +1,7 @@
 package lags;
 
 import static org.junit.Assert.*;
+import static org.hamcrest.core.StringContains.*;
 
 import java.io.IOException;
 import org.junit.Rule;
@@ -8,6 +9,7 @@ import org.junit.Test;
 import org.junit.contrib.java.lang.system.SystemOutRule;
 import org.junit.contrib.java.lang.system.TextFromStandardInputStream;
 import static org.junit.contrib.java.lang.system.TextFromStandardInputStream.*;
+
 
 public class TestMain {
 
@@ -27,6 +29,19 @@ public class TestMain {
 		} catch (IOException e) {
 			fail();
 		}
+	}
+	
+	@Test
+	public void validateExampleOrder() throws IOException {
+		systemInMock.provideLines(
+			"A", "DONALD;2015001;006;10000.00",
+			"A", "DAISY;2015003;002;4000.00",
+			"A", "PICSOU;2015007;007;8000.00",
+			"A", "MICKEY;2015008;007;9000.00",
+			"C",
+			"Q");
+		Main.main(new String[] {});
+		assertThat(systemOutRule.getLog(), containsString("GS: 19000"));
 	}
 
 }
