@@ -10,42 +10,53 @@ public class Main {
 
     public static void main(String[] args) throws IOException
     {
-        LagsService service = new LagsService();
-        service.getFileOrder("../LQORDRES.CSV");
+        LagsService service = initLagsService();
         boolean hasUserQuit = false;        
         while (!hasUserQuit)
         {
             char command = getUserCommand();
-            switch (command)
-            {
-                case 'Q':
-                {
-                    hasUserQuit = true;
-                    break;
-                }
-                case 'L':
-                {
-                    service.list();
-                    break;
-                }
-                case 'A':
-                {
-                    service.addOrder();
-                    break;
-                }
-                case 'S':
-                {
-                    service.suppress();
-                    break;
-                }
-                case 'C':
-                {
-                    service.calculateTheGS(debug);
-                    break;
-                }
-            }
+            hasUserQuit = evaluateCommand(service, command);
         }
     }
+
+	private static LagsService initLagsService() {
+		LagsService service = new LagsService();
+        service.loadOrdersFromFile("../LQORDRES.CSV");
+		return service;
+	}
+
+	private static boolean evaluateCommand(LagsService service, char command) throws IOException {
+		boolean hasUserQuit = false;
+		switch (command)
+		{
+		    case 'Q':
+		    {
+		    	hasUserQuit = true;
+		    	break;
+		    }
+		    case 'L':
+		    {
+		        service.list();
+		        break;
+		    }
+		    case 'A':
+		    {
+		        service.addOrder();
+		        break;
+		    }
+		    case 'S':
+		    {
+		        service.suppress();
+		        break;
+		    }
+		    case 'C':
+		    {
+		        service.calculateTheGS(debug);
+		        break;
+		    }
+		}
+		return hasUserQuit;
+	}
 
 	private static char getUserCommand() throws IOException {
 		char command;

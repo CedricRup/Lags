@@ -10,8 +10,7 @@ public class LagsService {
 
     List<Order> listOrder = new ArrayList<>();
 
-    // read the order fil and calculate gross sales
-    public void getFileOrder(String fileName)
+    public void loadOrdersFromFile(String fileName)
     {
         try
         {
@@ -91,14 +90,6 @@ public class LagsService {
         listOrder.add(order);
         writeOrders("..\\ordres.csv");
     }
-
-    //public void CalculateGS()
-    //{
-    //    System.out.println("CALCULATING GS..");
-    //    theList = theList.OrderBy(ordre => ordre.debut).ToList();
-    //    double gs = GS(laListe);
-    //    System.out.println("GS: {0,10:N2}", ca);
-    //}
 
     private double GS(List<Order> orders, boolean debug)
     {

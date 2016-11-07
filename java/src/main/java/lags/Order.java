@@ -1,10 +1,44 @@
 package lags;
 
-import java.util.*;
-
 public class Order {
 
-    public Order(String id, int start, int duration, double price) {
+    @Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + duration;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		long temp;
+		temp = Double.doubleToLongBits(price);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		result = prime * result + start;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Order other = (Order) obj;
+		if (duration != other.duration)
+			return false;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		if (Double.doubleToLongBits(price) != Double.doubleToLongBits(other.price))
+			return false;
+		if (start != other.start)
+			return false;
+		return true;
+	}
+
+	public Order(String id, int start, int duration, double price) {
         this.id = id;
         this.start = start; // YYYYDDD format example 25 feb 2015 = 2015056
         this.duration = duration;

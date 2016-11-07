@@ -44,4 +44,15 @@ public class TestMain {
 		assertThat(systemOutRule.getLog(), containsString("GS: 19000"));
 	}
 
+	@Test
+	public void validateSupress() throws Exception {
+		systemInMock.provideLines(
+				"A", "DONALD;2015001;006;10000.00",
+				"S", "DONALD", 
+				"L",
+				"Q");
+			Main.main(new String[] {});
+			assertThat(systemOutRule.getLog(), containsString("ID:"));
+	}
+	
 }
