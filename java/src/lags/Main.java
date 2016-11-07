@@ -14,7 +14,7 @@ public class Main {
     public static void main(String[] args) throws IOException
     {
         LagsService service = new LagsService();
-        service.getFileOrder("..\\ORDRES.CSV");
+        service.getFileOrder("../LQORDRES.CSV");
         boolean flag = false;
         // While it's not the end
         while (!flag)
