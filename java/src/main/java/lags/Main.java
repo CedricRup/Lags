@@ -11,7 +11,7 @@ public class Main {
     public static void main(String[] args) throws IOException
     {
         LagsService service = initLagsService();
-        boolean hasUserQuit = false;        
+        boolean hasUserQuit = false;
         while (!hasUserQuit)
         {
             char command = getUserCommand();
@@ -36,12 +36,12 @@ public class Main {
 		    }
 		    case 'L':
 		    {
-		        service.list();
+		        service.showOrderList();
 		        break;
 		    }
 		    case 'A':
 		    {
-		        service.addOrder();
+		        service.addOrderAndWriteToFile();
 		        break;
 		    }
 		    case 'S':
@@ -51,7 +51,7 @@ public class Main {
 		    }
 		    case 'C':
 		    {
-		        service.calculateTheGS(debug);
+		        service.calculateAndShowGrossSales(debug);
 		        break;
 		    }
 		}
@@ -60,7 +60,7 @@ public class Main {
 
 	private static char getUserCommand() throws IOException {
 		char command;
-		do 
+		do
 		{
 		    System.out.println("A)DD ORDER  L)IST   C)ACLCULATE GS  S)UPPRESS  Q)UIT");
 		    BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
