@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 
 public class RentAPlaneService {
 
-    List<Order> listOrder = new ArrayList<>();
+    private List<Order> orders = new ArrayList<>();
     private static final Logger LOG = LoggerFactory.getLogger(RentAPlaneService.class);
 
     public void loadOrdersFromFile(String fileName) {
@@ -32,7 +32,7 @@ public class RentAPlaneService {
                 int filed3 = Integer.parseInt(champs[2]);
                 double fld4 = Double.parseDouble(champs[3]);
                 Order order = new Order(fld1, fld2, filed3, fld4);
-                listOrder.add(order);
+                orders.add(order);
             }
             br.close();
             fr.close();
@@ -45,10 +45,10 @@ public class RentAPlaneService {
         }
     }
 
-    void writeOrdersToFile(String filename) {
+    private void writeOrdersToFile(String filename) {
         try {
             FileWriter writer = new FileWriter(new File(filename));
-            for (Order order : listOrder) {
+            for (Order order : orders) {
                 String[] CSVline = new String[4];
                 CSVline[0] = order.getId();
                 CSVline[1] = Integer.toString(order.getDepartureDateYYYYDD());
@@ -60,22 +60,6 @@ public class RentAPlaneService {
         } catch (IOException e) {
             // TODO CRU what do you want to do here ?
         }
-    }
-
-    public void showOrderList() {
-        System.out.println("ORDERS LIST");
-        System.out.println(String.format("%-8s %10s %5s %10s", "ID", "DEBUT", "DUREE", "PRIX"));
-        System.out.println(String.format("%-8s %10s %5s %10s", "--------", "-------", "-----", "----------"));
-
-        listOrder.stream()
-            .sorted((o1, o2) -> Integer.compare(o1.getDepartureDateYYYYDD(), o2.getDepartureDateYYYYDD()))
-            .forEach(this::showOrder);
-
-        System.out.println(String.format("%-8s %10s %5s %10s", "--------", "-------", "-----", "----------"));
-    }
-
-    public void showOrder(Order order) {
-        System.out.println(String.format("%-8s %10d %5d %10f", order.getId(), order.getDepartureDateYYYYDD(), order.getDurationInDays(), order.getPrice()));
     }
 
     public void addOrderAndWriteToFile() throws IOException {
@@ -92,7 +76,7 @@ public class RentAPlaneService {
         int dur = Integer.parseInt(fields[2]);
         double pr = Double.parseDouble(fields[3]);
         Order order = new Order(id, st, dur, pr);
-        listOrder.add(order);
+        orders.add(order);
         writeOrdersToFile("..\\ordres.csv");
     }
 
@@ -120,22 +104,33 @@ public class RentAPlaneService {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
         String id = br.readLine();
-        this.listOrder = listOrder.stream().filter(o -> !o.getId().equals(id.toUpperCase())).collect(Collectors.toList());
+        this.orders = orders.stream().filter(o -> !o.getId().equals(id.toUpperCase())).collect(Collectors.toList());
         writeOrdersToFile("..\\ORDRES.CSV");
     }
 
     public void calculateAndShowGrossSales() {
         System.out.println("CALCULATING GS..");
 
-        listOrder = listOrder
+        orders = orders
             .stream()
             .sorted((o1, o2) -> Integer.compare(o1.getDepartureDateYYYYDD(), o2.getDepartureDateYYYYDD()))
             .collect(Collectors.toList());
 
-        double ca = calculateGrossSales(listOrder);
+        double ca = calculateGrossSales(orders);
         System.out.print("GS: ");
         System.out.printf(new DecimalFormat("#.##").format(ca));
         System.out.println();
     }
+
+	public List<Order> getOrdersSortByDepartureDate() {
+		return orders
+	            .stream()
+	            .sorted((o1, o2) -> Integer.compare(o1.getDepartureDateYYYYDD(), o2.getDepartureDateYYYYDD()))
+	            .collect(Collectors.toList());
+	}
+	
+	public List<Order> getOrders() {
+		return new ArrayList<Order>(orders);
+	}
 
 }
