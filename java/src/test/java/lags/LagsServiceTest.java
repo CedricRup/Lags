@@ -3,6 +3,7 @@ package lags;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.SystemOutRule;
@@ -46,7 +47,17 @@ public class LagsServiceTest {
     @Test
     public void emptyOrdersWillReturnZeroGrossSales() {
         LagsService service = new LagsService();
-        assertEquals(service.calculateGrossSales(Collections.emptyList(), false), 0.00, 0.0);
+        assertEquals(0.00, service.calculateGrossSales(Collections.emptyList(), false), 0.0);
+    }
+
+    @Test
+    @Ignore("test fails - what ist correct -> fix test")
+    public void ordersSpanningOverYearChangeShouldntWork() {
+        LagsService service = new LagsService();
+        List<Order> orderList = new ArrayList<>();
+        orderList.add(new Order("DONALD", 2015365, 10, 100));
+        orderList.add(new Order("MICKEY", 2016001, 1, 100));
+        assertEquals(100.0, service.calculateGrossSales(orderList, false), 0.0);
     }
 
     private LagsService createStubOrders() {
