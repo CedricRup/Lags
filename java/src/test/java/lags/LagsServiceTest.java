@@ -1,8 +1,6 @@
 package lags;
 
 import static org.junit.Assert.*;
-import static org.junit.contrib.java.lang.system.TextFromStandardInputStream.emptyStandardInputStream;
-
 import java.util.ArrayList;
 import java.util.List;
 
