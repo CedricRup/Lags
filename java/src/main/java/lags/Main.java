@@ -34,7 +34,7 @@ public class Main {
 		    }
 		    case 'L':
 		    {
-		        service.showOrderList();
+		        RentAPlaneUI.showOrderList(service);
 		        break;
 		    }
 		    case 'A':
