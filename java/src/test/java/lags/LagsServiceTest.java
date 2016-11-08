@@ -49,9 +49,20 @@ public class LagsServiceTest {
         LagsService service = new LagsService();
         assertEquals(0.00, service.calculateGrossSales(Collections.emptyList(), false), 0.0);
     }
-
+    
     @Test
-    @Ignore("test fails - what ist correct -> fix test")
+    public void exampleOrderCalculatesGrossSaleOf19000() {
+    	LagsService service = new LagsService();
+        List<Order> orderList = new ArrayList<>();
+		orderList.add(new Order("DONALD",2015001, 6,10000.00));
+		orderList.add(new Order("DAISY", 2015003, 2, 4000.00));
+		orderList.add(new Order("PICSOU", 2015007, 7, 8000.00));
+		orderList.add(new Order("MICKEY",2015008, 7, 9000.00));
+		assertEquals(19000.0, service.calculateGrossSales(orderList, false), 0.0);
+    }
+
+    @Test(expected=IllegalArgumentException.class)
+    @Ignore
     public void ordersSpanningOverYearChangeShouldntWork() {
         LagsService service = new LagsService();
         List<Order> orderList = new ArrayList<>();

@@ -96,9 +96,9 @@ public class LagsService {
         if (orders.size() == 0) {
             return 0.0;
         }
+        // TODO: Fix it really and don't throw an exception, see PLAF ticket nO 4807
+        //validateOrdersDontSpanOverTwoYears(orders);
         Order firstOrder = orders.get(0);
-        // Warning : doesn't work for order that span on two years
-        // see PLAF ticket nO 4807
         List<Order> allOrdersPossibleAfterFirstOrder = orders.stream()
             .filter(o -> o.getDepartureDateYYYYDD() >= (firstOrder.getDepartureDateYYYYDD() + firstOrder.getDurationInDays()))
             .collect(Collectors.toList());
@@ -110,7 +110,7 @@ public class LagsService {
         return bestGrossSale;
     }
 
-    public void removeOrderAndWriteToFile() throws IOException {
+	public void removeOrderAndWriteToFile() throws IOException {
         System.out.println("DELETE ORDER");
         System.out.println("ID:");
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
