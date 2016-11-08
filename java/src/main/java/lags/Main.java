@@ -6,11 +6,9 @@ import java.io.InputStreamReader;
 
 public class Main {
 
-    static final boolean debug = true;
-
     public static void main(String[] args) throws IOException
     {
-        LagsService service = initLagsService();
+        RentAPlaneService service = initRentAPlaneService();
         boolean hasUserQuit = false;
         while (!hasUserQuit)
         {
@@ -19,13 +17,13 @@ public class Main {
         }
     }
 
-	private static LagsService initLagsService() {
-		LagsService service = new LagsService();
+	private static RentAPlaneService initRentAPlaneService() {
+		RentAPlaneService service = new RentAPlaneService();
         service.loadOrdersFromFile("../LQORDRES.CSV");
 		return service;
 	}
 
-	private static boolean evaluateCommand(LagsService service, char command) throws IOException {
+	private static boolean evaluateCommand(RentAPlaneService service, char command) throws IOException {
 		boolean hasUserQuit = false;
 		switch (command)
 		{
@@ -51,7 +49,7 @@ public class Main {
 		    }
 		    case 'C':
 		    {
-		        service.calculateAndShowGrossSales(debug);
+		        service.calculateAndShowGrossSales();
 		        break;
 		    }
 		}

@@ -11,10 +11,13 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class LagsService {
+public class RentAPlaneService {
 
     List<Order> listOrder = new ArrayList<>();
+    private static final Logger LOG = LoggerFactory.getLogger(RentAPlaneService.class);
 
     public void loadOrdersFromFile(String fileName) {
         try {
@@ -35,9 +38,10 @@ public class LagsService {
             fr.close();
         } catch (FileNotFoundException e) {
             // TODO WTF ...
-            System.out.println("CSV FILE NOT FOUND; CREATING ONE.");
+            LOG.info("CSV FILE NOT FOUND; CREATING ONE.");
             writeOrdersToFile(fileName);
         } catch (IOException e) {
+        	//FIXME don't catch but let API user handle this?
         }
     }
 
@@ -92,7 +96,7 @@ public class LagsService {
         writeOrdersToFile("..\\ordres.csv");
     }
 
-    double calculateGrossSales(List<Order> orders, boolean debug) {
+    double calculateGrossSales(List<Order> orders) {
         if (orders.size() == 0) {
             return 0.0;
         }
@@ -103,10 +107,10 @@ public class LagsService {
             .filter(o -> o.getDepartureDateYYYYDD() >= (firstOrder.getDepartureDateYYYYDD() + firstOrder.getDurationInDays()))
             .collect(Collectors.toList());
         List<Order> orderListWithoutFirstOrder = orders.subList(1, orders.size());
-        double grossSale1 = firstOrder.getPrice() + calculateGrossSales(allOrdersPossibleAfterFirstOrder, debug);
-        double grossSale2 = calculateGrossSales(orderListWithoutFirstOrder, debug);
+        double grossSale1 = firstOrder.getPrice() + calculateGrossSales(allOrdersPossibleAfterFirstOrder);
+        double grossSale2 = calculateGrossSales(orderListWithoutFirstOrder);
         double bestGrossSale = Math.max(grossSale1, grossSale2);
-        System.out.println(debug ? new DecimalFormat("#.##").format(bestGrossSale) : ".");
+        LOG.debug(new DecimalFormat("#.##").format(bestGrossSale));
         return bestGrossSale;
     }
 
@@ -120,7 +124,7 @@ public class LagsService {
         writeOrdersToFile("..\\ORDRES.CSV");
     }
 
-    public void calculateAndShowGrossSales(boolean debug) {
+    public void calculateAndShowGrossSales() {
         System.out.println("CALCULATING GS..");
 
         listOrder = listOrder
@@ -128,7 +132,7 @@ public class LagsService {
             .sorted((o1, o2) -> Integer.compare(o1.getDepartureDateYYYYDD(), o2.getDepartureDateYYYYDD()))
             .collect(Collectors.toList());
 
-        double ca = calculateGrossSales(listOrder, debug);
+        double ca = calculateGrossSales(listOrder);
         System.out.print("GS: ");
         System.out.printf(new DecimalFormat("#.##").format(ca));
         System.out.println();
