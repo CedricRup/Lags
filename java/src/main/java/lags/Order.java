@@ -83,4 +83,13 @@ public class Order {
         return true;
     }
 
+    @Override
+    public String toString() {
+        return "Order{" +
+            "id='" + id + '\'' +
+            ", departureDateYYYYDD=" + departureDateYYYYDD +
+            ", durationInDays=" + durationInDays +
+            ", price=" + price +
+            '}';
+    }
 }

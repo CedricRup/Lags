@@ -6,13 +6,13 @@ import java.io.InputStreamReader;
 
 public class RentAPlaneUI {
 	private RentAPlaneService service;
-	
+
 	public void setService(RentAPlaneService service) {
 		this.service = service;
 	}
 
 	public RentAPlaneUI() {}
-	
+
     public void showOrderList() {
         System.out.println("ORDERS LIST");
         System.out.println(String.format("%-8s %10s %5s %10s", "ID", "DEBUT", "DUREE", "PRIX"));
@@ -28,10 +28,10 @@ public class RentAPlaneUI {
         System.out.println(String.format("%-8s %10d %5d %10f", order.getId(), order.getDepartureDateYYYYDD(), order.getDurationInDays(), order.getPrice()));
     }
 
-	public void addOrder() throws IOException {		
+	public void addOrder() throws IOException {
         System.out.println("ADD ORDER");
         System.out.println("FORMAT = ID;STARTT;END;PRICE");
-        
+
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         String line = br.readLine();
 
@@ -44,5 +44,16 @@ public class RentAPlaneUI {
         Order order = new Order(id, st, dur, pr);
         service.addOrderAndWriteToFile(order);
 	}
+
+    public void removeOrder() throws IOException {
+        System.out.println("DELETE ORDER");
+        System.out.println("ID:");
+
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        String id = br.readLine();
+
+        service.removeOrderAndWriteToFile(id);
+    }
+
 
 }

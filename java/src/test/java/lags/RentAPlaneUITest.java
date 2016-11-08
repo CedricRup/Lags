@@ -1,32 +1,47 @@
 package lags;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.junit.contrib.java.lang.system.TextFromStandardInputStream.emptyStandardInputStream;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-import java.io.IOException;
-
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.SystemOutRule;
 import org.junit.contrib.java.lang.system.TextFromStandardInputStream;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 public class RentAPlaneUITest {
-	
-	@Rule
+
+    @Rule
     public final SystemOutRule systemOutRule = new SystemOutRule().enableLog();
-	
-	@Rule
-	public final TextFromStandardInputStream systemInMock = emptyStandardInputStream();
-	
-    private static final String TESTDATA_FILENAME = RentAPlaneServiceTest.class.getResource("TestData.csv").getPath();
-    
+
+    @Rule
+    public final TextFromStandardInputStream systemInMock = emptyStandardInputStream();
+
     private RentAPlaneUI ui = new RentAPlaneUI();
-    
+
+    RentAPlaneService mockService;
+
+    @Before
+    public void initMocks() {
+        mockService = mock(RentAPlaneService.class);
+        ui.setService(mockService);
+    }
+
     @Test
     public void listDisplayOrdersCorrectly() {
-        RentAPlaneService service = createStubOrders();
-        ui.setService(service);
+        // Arrange
+        when(mockService.getOrdersSortByDepartureDate()).thenReturn(createStubOrders());
+        // Act
         ui.showOrderList();
+        // Assert
         assertEquals("ORDERS LIST\n" +
             "ID            DEBUT DUREE       PRIX\n" +
             "--------    ------- ----- ----------\n" +
@@ -36,21 +51,36 @@ public class RentAPlaneUITest {
             "MICKEY      2015008     7 9000,000000\n" +
             "--------    ------- ----- ----------\n", systemOutRule.getLog());
     }
-    
+
     @Test
     public void addOrderAsksUserForOrderInCorrectFormat() throws IOException {
-    	RentAPlaneService service = new RentAPlaneService();
-    	systemInMock.provideLines("DONALD;2015001;006;10000.00");
-    	ui.setService(service);
-    	ui.addOrder();
-    	assertEquals("ADD ORDER\nFORMAT = ID;STARTT;END;PRICE\n", systemOutRule.getLog());
-    	assertTrue(service.getOrders().size() == 1);
-    	assertEquals(new Order("DONALD", 2015001, 6, 10000.00), service.getOrders().get(0));
+        // Arrange
+        systemInMock.provideLines("DONALD;2015001;006;10000.00");
+        // Act
+        ui.addOrder();
+        // Assert
+        assertEquals("ADD ORDER\nFORMAT = ID;STARTT;END;PRICE\n", systemOutRule.getLog());
+        verify(mockService, times(1)).addOrderAndWriteToFile(new Order("DONALD", 2015001, 6, 10000.00));
     }
 
-    private RentAPlaneService createStubOrders() {
-        RentAPlaneService service = new RentAPlaneService();
-        service.loadOrdersFromFile(TESTDATA_FILENAME);
-        return service;
+    @Test
+    public void removeOrderDisplaysAndCallServiceCorrect() throws IOException {
+        // Arrange
+        systemInMock.provideLines("DONALD");
+        // Act
+        ui.removeOrder();
+        // Assert
+        assertEquals("DELETE ORDER\nID:\n", systemOutRule.getLog());
+        verify(mockService, times(1)).removeOrderAndWriteToFile("DONALD");
     }
+
+    private List<Order> createStubOrders() {
+        List<Order> expectedOrders = new ArrayList<>();
+        expectedOrders.add(new Order("DONALD", 2015001, 6, 10000.00));
+        expectedOrders.add(new Order("DAISY", 2015003, 2, 4000.00));
+        expectedOrders.add(new Order("PICSOU", 2015007, 7, 8000.00));
+        expectedOrders.add(new Order("MICKEY", 2015008, 7, 9000.00));
+        return expectedOrders;
+    }
+
 }

@@ -1,18 +1,18 @@
 package lags;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class RentAPlaneService {
 
@@ -41,7 +41,7 @@ public class RentAPlaneService {
             LOG.info("CSV FILE NOT FOUND; CREATING ONE.");
             writeOrdersToFile(fileName);
         } catch (IOException e) {
-        	//FIXME don't catch but let API user handle this?
+            //FIXME don't catch but let API user handle this?
         }
     }
 
@@ -85,12 +85,7 @@ public class RentAPlaneService {
         return bestGrossSale;
     }
 
-	public void removeOrderAndWriteToFile() throws IOException {
-        System.out.println("DELETE ORDER");
-        System.out.println("ID:");
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-
-        String id = br.readLine();
+    public void removeOrderAndWriteToFile(String id) throws IOException {
         this.orders = orders.stream().filter(o -> !o.getId().equals(id.toUpperCase())).collect(Collectors.toList());
         writeOrdersToFile("..\\ORDRES.CSV");
     }
@@ -109,15 +104,15 @@ public class RentAPlaneService {
         System.out.println();
     }
 
-	public List<Order> getOrdersSortByDepartureDate() {
-		return orders
-	            .stream()
-	            .sorted((o1, o2) -> Integer.compare(o1.getDepartureDateYYYYDD(), o2.getDepartureDateYYYYDD()))
-	            .collect(Collectors.toList());
-	}
-	
-	public List<Order> getOrders() {
-		return new ArrayList<Order>(orders);
-	}
+    public List<Order> getOrdersSortByDepartureDate() {
+        return orders
+            .stream()
+            .sorted((o1, o2) -> Integer.compare(o1.getDepartureDateYYYYDD(), o2.getDepartureDateYYYYDD()))
+            .collect(Collectors.toList());
+    }
+
+    public List<Order> getOrders() {
+        return new ArrayList<Order>(orders);
+    }
 
 }

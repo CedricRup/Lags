@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class Main {
-	
+
 	static RentAPlaneUI ui = new RentAPlaneUI();
 
     public static void main(String[] args) throws IOException
@@ -47,7 +47,7 @@ public class Main {
 		    }
 		    case 'S':
 		    {
-		        service.removeOrderAndWriteToFile();
+				ui.removeOrder();
 		        break;
 		    }
 		    case 'C':
