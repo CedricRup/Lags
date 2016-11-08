@@ -46,7 +46,7 @@ public class Main {
 		    }
 		    case 'S':
 		    {
-		        service.suppress();
+		        service.removeOrderAndWriteToFile();
 		        break;
 		    }
 		    case 'C':

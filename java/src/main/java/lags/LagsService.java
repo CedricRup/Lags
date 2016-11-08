@@ -47,8 +47,8 @@ public class LagsService {
             for (Order order : listOrder) {
                 String[] CSVline = new String[4];
                 CSVline[0] = order.getId();
-                CSVline[1] = Integer.toString(order.getStart());
-                CSVline[2] = Integer.toString(order.getDuration());
+                CSVline[1] = Integer.toString(order.getDepartureDateYYYYDD());
+                CSVline[2] = Integer.toString(order.getDurationInDays());
                 CSVline[3] = Double.toString(order.getPrice());
                 writer.write(String.join(";", CSVline) + "\n");
             }
@@ -64,14 +64,14 @@ public class LagsService {
         System.out.println(String.format("%-8s %10s %5s %10s", "--------", "-------", "-----", "----------"));
 
         listOrder.stream()
-            .sorted((o1, o2) -> Integer.compare(o1.getStart(), o2.getStart()))
+            .sorted((o1, o2) -> Integer.compare(o1.getDepartureDateYYYYDD(), o2.getDepartureDateYYYYDD()))
             .forEach(this::showOrder);
 
         System.out.println(String.format("%-8s %10s %5s %10s", "--------", "-------", "-----", "----------"));
     }
 
     public void showOrder(Order order) {
-        System.out.println(String.format("%-8s %10d %5d %10f", order.getId(), order.getStart(), order.getDuration(), order.getPrice()));
+        System.out.println(String.format("%-8s %10d %5d %10f", order.getId(), order.getDepartureDateYYYYDD(), order.getDurationInDays(), order.getPrice()));
     }
 
     public void addOrderAndWriteToFile() throws IOException {
@@ -96,20 +96,21 @@ public class LagsService {
         if (orders.size() == 0) {
             return 0.0;
         }
-        Order order = orders.get(0);
+        Order firstOrder = orders.get(0);
         // Warning : doesn't work for order that span on two years
         // see PLAF ticket nO 4807
-        List<Order> list = orders.stream().filter(o -> o.getStart() >= (order.getStart() + order.getDuration())).collect(Collectors.toList());
-        List<Order> list2 = orders.subList(1, orders.size());
-        double gs = order.getPrice() + calculateGrossSales(list, debug);
-        // I can live.... with or withoooooout youuuuuu!
-        double gs2 = calculateGrossSales(list2, debug);
-        System.out.println(debug ? new DecimalFormat("#.##").format(Math.max(gs, gs2)) : ".");
-        return Math.max(gs, gs2); // LOL
+        List<Order> allOrdersPossibleAfterFirstOrder = orders.stream()
+            .filter(o -> o.getDepartureDateYYYYDD() >= (firstOrder.getDepartureDateYYYYDD() + firstOrder.getDurationInDays()))
+            .collect(Collectors.toList());
+        List<Order> orderListWithoutFirstOrder = orders.subList(1, orders.size());
+        double grossSale1 = firstOrder.getPrice() + calculateGrossSales(allOrdersPossibleAfterFirstOrder, debug);
+        double grossSale2 = calculateGrossSales(orderListWithoutFirstOrder, debug);
+        double bestGrossSale = Math.max(grossSale1, grossSale2);
+        System.out.println(debug ? new DecimalFormat("#.##").format(bestGrossSale) : ".");
+        return bestGrossSale;
     }
 
-    // file update
-    public void suppress() throws IOException {
+    public void removeOrderAndWriteToFile() throws IOException {
         System.out.println("DELETE ORDER");
         System.out.println("ID:");
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -124,7 +125,7 @@ public class LagsService {
 
         listOrder = listOrder
             .stream()
-            .sorted((o1, o2) -> Integer.compare(o1.getStart(), o2.getStart()))
+            .sorted((o1, o2) -> Integer.compare(o1.getDepartureDateYYYYDD(), o2.getDepartureDateYYYYDD()))
             .collect(Collectors.toList());
 
         double ca = calculateGrossSales(listOrder, debug);
