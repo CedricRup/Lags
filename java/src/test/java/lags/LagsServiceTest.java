@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.junit.contrib.java.lang.system.SystemOutRule;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class LagsServiceTest {
@@ -15,12 +16,6 @@ public class LagsServiceTest {
     public final SystemOutRule systemOutRule = new SystemOutRule().enableLog();
 
     private static final String TESTDATA_FILENAME = LagsServiceTest.class.getResource("TestData.csv").getPath();
-
-    private LagsService createStubOrders() {
-        LagsService service = new LagsService();
-        service.loadOrdersFromFile(TESTDATA_FILENAME);
-        return service;
-    }
 
     @Test
     public void loadOrdersFromFileWorks() {
@@ -46,6 +41,18 @@ public class LagsServiceTest {
             "PICSOU      2015007     7 8000,000000\n" +
             "MICKEY      2015008     7 9000,000000\n" +
             "--------    ------- ----- ----------\n", systemOutRule.getLog());
+    }
+
+    @Test
+    public void emptyOrdersWillReturnZeroGrossSales() {
+        LagsService service = new LagsService();
+        assertEquals(service.calculateGrossSales(Collections.emptyList(), false), 0.00, 0.0);
+    }
+
+    private LagsService createStubOrders() {
+        LagsService service = new LagsService();
+        service.loadOrdersFromFile(TESTDATA_FILENAME);
+        return service;
     }
 
 }

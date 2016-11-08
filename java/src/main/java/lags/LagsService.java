@@ -92,7 +92,7 @@ public class LagsService {
         writeOrdersToFile("..\\ordres.csv");
     }
 
-    private double calculateGrossSales(List<Order> orders, boolean debug) {
+    double calculateGrossSales(List<Order> orders, boolean debug) {
         if (orders.size() == 0) {
             return 0.0;
         }
