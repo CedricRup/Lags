@@ -62,20 +62,7 @@ public class RentAPlaneService {
         }
     }
 
-    public void addOrderAndWriteToFile() throws IOException {
-        System.out.println("ADD ORDER");
-        System.out.println("FORMAT = ID;STARTT;END;PRICE");
-
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        String line = br.readLine();
-
-        line = line.toUpperCase();
-        String[] fields = line.split(";");
-        String id = fields[0];
-        int st = Integer.parseInt(fields[1]);
-        int dur = Integer.parseInt(fields[2]);
-        double pr = Double.parseDouble(fields[3]);
-        Order order = new Order(id, st, dur, pr);
+    public void addOrderAndWriteToFile(Order order) throws IOException {
         orders.add(order);
         writeOrdersToFile("..\\ordres.csv");
     }

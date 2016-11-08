@@ -5,10 +5,13 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class Main {
+	
+	static RentAPlaneUI ui = new RentAPlaneUI();
 
     public static void main(String[] args) throws IOException
     {
         RentAPlaneService service = initRentAPlaneService();
+        ui.setService(service);
         boolean hasUserQuit = false;
         while (!hasUserQuit)
         {
@@ -34,12 +37,12 @@ public class Main {
 		    }
 		    case 'L':
 		    {
-		        RentAPlaneUI.showOrderList(service);
+		        ui.showOrderList();
 		        break;
 		    }
 		    case 'A':
 		    {
-		        service.addOrderAndWriteToFile();
+		        ui.addOrder();
 		        break;
 		    }
 		    case 'S':
