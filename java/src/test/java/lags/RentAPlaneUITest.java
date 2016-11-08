@@ -14,8 +14,10 @@ import org.junit.contrib.java.lang.system.SystemOutRule;
 import org.junit.contrib.java.lang.system.TextFromStandardInputStream;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class RentAPlaneUITest {
 
@@ -72,6 +74,18 @@ public class RentAPlaneUITest {
         // Assert
         assertEquals("DELETE ORDER\nID:\n", systemOutRule.getLog());
         verify(mockService, times(1)).removeOrderAndWriteToFile("DONALD");
+    }
+    
+    @Test
+    public void calculateAndShowGrossSalesDisplaysCorrectly() {
+    	// Arrange
+        when(mockService.calculateAndShowGrossSales()).thenReturn(19000.00);
+        // Act
+        ui.calculateAndShowGrossSales();
+    	// Assert
+        String expected = "CALCULATING GS..\n"+
+        	"GS: 19000\n";
+        assertEquals(expected, systemOutRule.getLog());
     }
 
     private List<Order> createStubOrders() {

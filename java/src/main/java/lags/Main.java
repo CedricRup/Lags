@@ -1,75 +1,29 @@
 package lags;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 
 public class Main {
 
-	static RentAPlaneUI ui = new RentAPlaneUI();
+	static RentAPlaneUI ui;
 
     public static void main(String[] args) throws IOException
     {
-        RentAPlaneService service = initRentAPlaneService();
-        ui.setService(service);
-        boolean hasUserQuit = false;
-        while (!hasUserQuit)
-        {
-            char command = getUserCommand();
-            hasUserQuit = evaluateCommand(service, command);
-        }
+        initApplication();
+        runApplication();
     }
 
-	private static RentAPlaneService initRentAPlaneService() {
+	private static void initApplication() {
 		RentAPlaneService service = new RentAPlaneService();
         service.loadOrdersFromFile("../LQORDRES.CSV");
-		return service;
+        ui = new RentAPlaneUI();
+        ui.setService(service);
 	}
 
-	private static boolean evaluateCommand(RentAPlaneService service, char command) throws IOException {
-		boolean hasUserQuit = false;
-		switch (command)
-		{
-		    case 'Q':
-		    {
-		    	hasUserQuit = true;
-		    	break;
-		    }
-		    case 'L':
-		    {
-		        ui.showOrderList();
-		        break;
-		    }
-		    case 'A':
-		    {
-		        ui.addOrder();
-		        break;
-		    }
-		    case 'S':
-		    {
-				ui.removeOrder();
-		        break;
-		    }
-		    case 'C':
-		    {
-		        service.calculateAndShowGrossSales();
-		        break;
-		    }
-		}
-		return hasUserQuit;
+	private static void runApplication() throws IOException {
+		while (!ui.hasUserQuit())
+        {
+            char command = ui.getUserCommand();
+            ui.evaluateCommand(command);
+        }
 	}
-
-	private static char getUserCommand() throws IOException {
-		char command;
-		do
-		{
-		    System.out.println("A)DD ORDER  L)IST   C)ACLCULATE GS  S)UPPRESS  Q)UIT");
-		    BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		    command = br.readLine().charAt(0);
-		    command = Character.toUpperCase(command);
-		    System.out.println();
-		} while (command != 'A' && command != 'L' && command != 'S' && command != 'Q' && command != 'C');
-		return command;
-	}
-
 }

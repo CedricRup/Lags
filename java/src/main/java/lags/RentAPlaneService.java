@@ -90,18 +90,9 @@ public class RentAPlaneService {
         writeOrdersToFile("..\\ORDRES.CSV");
     }
 
-    public void calculateAndShowGrossSales() {
-        System.out.println("CALCULATING GS..");
+    public double calculateAndShowGrossSales() {
+        return calculateGrossSales(getOrdersSortByDepartureDate());
 
-        orders = orders
-            .stream()
-            .sorted((o1, o2) -> Integer.compare(o1.getDepartureDateYYYYDD(), o2.getDepartureDateYYYYDD()))
-            .collect(Collectors.toList());
-
-        double ca = calculateGrossSales(orders);
-        System.out.print("GS: ");
-        System.out.printf(new DecimalFormat("#.##").format(ca));
-        System.out.println();
     }
 
     public List<Order> getOrdersSortByDepartureDate() {

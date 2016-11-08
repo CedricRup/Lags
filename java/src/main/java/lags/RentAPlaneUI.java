@@ -3,9 +3,15 @@ package lags;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.text.DecimalFormat;
 
 public class RentAPlaneUI {
 	private RentAPlaneService service;
+	private boolean hasUserQuit = false;
+
+	public boolean hasUserQuit() {
+		return hasUserQuit;
+	}
 
 	public void setService(RentAPlaneService service) {
 		this.service = service;
@@ -54,6 +60,58 @@ public class RentAPlaneUI {
 
         service.removeOrderAndWriteToFile(id);
     }
+
+	public void calculateAndShowGrossSales() {
+        System.out.println("CALCULATING GS..");
+        double ca = service.calculateAndShowGrossSales();
+        System.out.print("GS: ");
+        System.out.printf(new DecimalFormat("#.##").format(ca));
+        System.out.println();
+	}
+	
+	public void evaluateCommand(char command) throws IOException {
+		switch (command)
+		{
+		    case 'Q':
+		    {
+		    	hasUserQuit = true;
+		    	break;
+		    }
+		    case 'L':
+		    {
+		        showOrderList();
+		        break;
+		    }
+		    case 'A':
+		    {
+		        addOrder();
+		        break;
+		    }
+		    case 'S':
+		    {
+				removeOrder();
+		        break;
+		    }
+		    case 'C':
+		    {
+		        calculateAndShowGrossSales();
+		        break;
+		    }
+		}
+	}
+
+	public char getUserCommand() throws IOException {
+		char command;
+		do
+		{
+		    System.out.println("A)DD ORDER  L)IST   C)ACLCULATE GS  S)UPPRESS  Q)UIT");
+		    BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		    command = br.readLine().charAt(0);
+		    command = Character.toUpperCase(command);
+		    System.out.println();
+		} while (command != 'A' && command != 'L' && command != 'S' && command != 'Q' && command != 'C');
+		return command;
+	}
 
 
 }
